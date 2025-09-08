@@ -39,7 +39,7 @@ public class StudentService {
     }
 
     public void deleteById(Long id) {
-        if (id == null) {
+        if (id == null || !studentRepository.existsById(id)) {
             return;
         }
         studentRepository.deleteById(id);
