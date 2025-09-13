@@ -1,12 +1,15 @@
 package ru.hogwarts.school.controller;
 
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.service.FacultyService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -48,11 +51,37 @@ public class FacultyController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/by-colour")
-    public ResponseEntity<Faculty> findByColour(@RequestParam String colour) {
-        Faculty faculty = facultyService.findByColour(colour);
+    @GetMapping("/by-color")
+    public ResponseEntity<Faculty> findByColor(@RequestParam String color) {
+        Faculty faculty = facultyService.findByColor(color);
         if (faculty != null) {
             return ResponseEntity.ok(faculty);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Faculty> findByNameOrColor(@RequestParam String query) {
+        Faculty facultyByName = facultyService.findByNameIgnoreCase(query);
+        if (facultyByName != null) {
+            return ResponseEntity.ok(facultyByName);
+        }
+        Faculty facultyByColor = facultyService.findByColorIgnoreCase(query);
+        if (facultyByColor != null) {
+            return ResponseEntity.ok(facultyByColor);
+        }
+        return ResponseEntity.notFound().build();
+    }
+    @Autowired
+    private FacultyRepository facultyRepository;
+
+    @GetMapping("/{facultyId}/students")
+    public ResponseEntity<List<Student>> getStudentsByFaculty(@PathVariable Long facultyId) {
+        Optional<Faculty> facultyOpt = facultyRepository.findById(facultyId);
+        if (facultyOpt.isPresent()) {
+            List<Student> students = facultyOpt.get().getStudents();
+            return ResponseEntity.ok(students);
         } else {
             return ResponseEntity.notFound().build();
         }

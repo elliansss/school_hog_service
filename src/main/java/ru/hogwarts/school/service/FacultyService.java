@@ -18,12 +18,20 @@ public class FacultyService {
         return facultyRepository.save(faculty);
     }
 
+    public Faculty findByNameIgnoreCase(String name) {
+        return facultyRepository.findByNameIgnoreCase(name);
+    }
+
+    public Faculty findByColorIgnoreCase(String colour) {
+        return facultyRepository.findByColourIgnoreCase(colour);
+    }
+
     public Optional<Faculty> findFacultyById(Long id) {
         return facultyRepository.findById(id);
     }
 
-    public Faculty findByColour(String colour) {
-        return facultyRepository.findByColour(colour).orElse(null);
+    public Faculty findByColor(String color) {
+        return facultyRepository.findByColor(color).orElse(null);
     }
 
     public Faculty editFaculty(Faculty faculty) {

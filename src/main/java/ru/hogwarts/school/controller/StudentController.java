@@ -3,7 +3,10 @@ package ru.hogwarts.school.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.FacultyRepository;
+import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.service.StudentService;
 
 import java.util.List;
@@ -51,5 +54,30 @@ public class StudentController {
     @GetMapping("/by-age")
     public List<Student> findByAge(@RequestParam int age) {
         return studentService.findByAge(age);
+    }
+    @GetMapping("/by-age-between")
+    public List<Student> getByAgeBetween(@RequestParam int min, @RequestParam int max) {
+        return studentService.findByAgeBetween(min, max);
+    }
+
+    @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
+    private FacultyRepository facultyRepository;
+
+    @GetMapping("/{studentId}/faculty")
+    public ResponseEntity<Faculty> getFacultyByStudent(@PathVariable Long studentId) {
+        Optional<Student> studentOpt = studentRepository.findById(studentId);
+        if (studentOpt.isPresent()) {
+            Faculty faculty = studentOpt.get().getFaculty();
+            if (faculty != null) {
+                return ResponseEntity.ok(faculty);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
