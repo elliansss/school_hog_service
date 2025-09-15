@@ -5,7 +5,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,10 +13,16 @@ public class Faculty {
     @Id
     @GeneratedValue
     private long id;
-    private String name, colour;
+    private String name, color;
 
     @OneToMany(mappedBy = "faculty")
     private List<Student> students;
+
+    public Faculty(long id, String name, String color) {
+        this.id = id;
+        this.name = name;
+        this.color = color;
+    }
 
     public List<Student> getStudents() {
         return students;
@@ -28,22 +33,16 @@ public class Faculty {
     }
 
 
-    public Faculty(long id, String name, String colour) {
-        this.id = id;
-        this.name = name;
-        this.colour = colour;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Faculty faculty = (Faculty) o;
-        return id == faculty.id && Objects.equals(name, faculty.name) && Objects.equals(colour, faculty.colour);
+        return id == faculty.id && Objects.equals(name, faculty.name) && Objects.equals(color, faculty.color);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, colour);
+        return Objects.hash(id, name, color);
     }
 
     public long getId() {
@@ -62,11 +61,15 @@ public class Faculty {
         this.name = name;
     }
 
-    public String getColour() {
-        return colour;
+    public String getColor() {
+        return color;
     }
 
-    public void setColour(String colour) {
-        this.colour = colour;
+    public void setColor(String color) {
+        this.color = color;
     }
+
+
+
 }
+
