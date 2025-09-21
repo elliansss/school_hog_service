@@ -7,6 +7,5 @@ import java.util.Optional;
 
 public interface FacultyRepository extends JpaRepository<Faculty, Long> {
     Optional<Faculty> findByColor(String color);
-    Faculty findByNameIgnoreCase(String name);
-    Faculty findByColourIgnoreCase(String colour);
+    Optional<Faculty> findByNameIgnoreCaseOrColorIgnoreCase(String name, String color);
 }
