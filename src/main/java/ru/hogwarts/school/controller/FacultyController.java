@@ -1,5 +1,6 @@
 package ru.hogwarts.school.controller;
 
+import org.springframework.http.HttpStatus;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
@@ -22,6 +23,9 @@ public class FacultyController {
     public FacultyController(FacultyService facultyService) {
         this.facultyService = facultyService;
     }
+
+    @Autowired
+    private FacultyRepository facultyRepository;
 
     @PostMapping
     public Faculty addFaculty(@RequestBody Faculty faculty) {
@@ -61,29 +65,13 @@ public class FacultyController {
         }
     }
 
-    @GetMapping("/search")
+    @GetMapping("/faculty/search")
     public ResponseEntity<Faculty> findByNameOrColor(@RequestParam String query) {
-        Faculty facultyByName = facultyService.findByNameIgnoreCase(query);
-        if (facultyByName != null) {
-            return ResponseEntity.ok(facultyByName);
-        }
-        Faculty facultyByColor = facultyService.findByColorIgnoreCase(query);
-        if (facultyByColor != null) {
-            return ResponseEntity.ok(facultyByColor);
-        }
-        return ResponseEntity.notFound().build();
-    }
-    @Autowired
-    private FacultyRepository facultyRepository;
-
-    @GetMapping("/{facultyId}/students")
-    public ResponseEntity<List<Student>> getStudentsByFaculty(@PathVariable Long facultyId) {
-        Optional<Faculty> facultyOpt = facultyRepository.findById(facultyId);
-        if (facultyOpt.isPresent()) {
-            List<Student> students = facultyOpt.get().getStudents();
-            return ResponseEntity.ok(students);
+        Optional<Faculty> facultyOptional = facultyRepository.findByNameIgnoreCaseOrColorIgnoreCase(query, query);
+        if (facultyOptional.isPresent()) {
+            return ResponseEntity.ok(facultyOptional.get());
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 }

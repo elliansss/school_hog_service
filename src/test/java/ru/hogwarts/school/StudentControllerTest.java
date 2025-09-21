@@ -9,22 +9,28 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
 import ru.hogwarts.school.controller.StudentController;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.StudentRepository;
 
 import java.net.URI;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class StudentControllerTest {
     @LocalServerPort
     private int port;
 
     @Autowired
     private StudentController studentController;
+
+    @Autowired
+    private StudentRepository studentRepository;
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -36,17 +42,25 @@ public class StudentControllerTest {
 
     @Test
     public void testAddStudent() {
-        Student student = new Student(124643L, "Joseph", 17);
+        Student student = new Student(null, "Joseph", 17);
         Student result = this.restTemplate.postForObject("http://localhost:" + port + "/student", student, Student.class);
-        Assertions.assertThat(result).isEqualTo(student);
+        Assertions.assertThat(result.getName()).isEqualTo(student.getName());
+        Assertions.assertThat(result.getAge()).isEqualTo(student.getAge());
+        Assertions.assertThat(result.getId()).isNotNull();
     }
 
     @Test
     public void testFindById() {
-        long id = 124545L;
-        Student student = this.restTemplate.getForObject("http://localhost:" + port + "/student/" + id, Student.class);
-        Assertions.assertThat(student).isNotNull();
-        Assertions.assertThat(student.getId()).isEqualTo(id);
+        Student student = new Student(null, "Eric", 15);
+        student = studentRepository.save(student);
+        Long id = student.getId();
+
+        Student result = this.restTemplate.getForObject("http://localhost:" + port + "/student/" + id, Student.class);
+
+        Assertions.assertThat(result).isNotNull();
+        Assertions.assertThat(result.getId()).isEqualTo(student.getId());
+        Assertions.assertThat(result.getName()).isEqualTo(student.getName());
+        Assertions.assertThat(result.getAge()).isEqualTo(student.getAge());
     }
 
     @Test
