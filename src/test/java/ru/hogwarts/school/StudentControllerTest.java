@@ -95,6 +95,7 @@ public class StudentControllerTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
+
     @Test
     public void testFindByAge() {
         Student student = new Student(null, "Eric", 17);

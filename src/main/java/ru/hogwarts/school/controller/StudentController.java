@@ -67,6 +67,7 @@ public class StudentController {
 
     @GetMapping("/by-age-between")
     public List<Student> getByAgeBetween(@RequestParam int minAge, @RequestParam int maxAge) {
+
         return studentRepository.findByAgeBetween(minAge, maxAge);
     }
 

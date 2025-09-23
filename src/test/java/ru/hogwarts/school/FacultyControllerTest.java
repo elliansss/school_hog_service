@@ -121,3 +121,4 @@ public class FacultyControllerTest {
         assertThat(facultyList).isNotEmpty();
     }
 }
+

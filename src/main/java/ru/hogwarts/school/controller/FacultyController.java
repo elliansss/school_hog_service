@@ -45,6 +45,7 @@ public class FacultyController {
         if (updated != null) {
             return ResponseEntity.ok(updated);
         } else {
+
             return ResponseEntity.notFound().build();
         }
     }
