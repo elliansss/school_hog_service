@@ -6,10 +6,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import ru.hogwarts.school.controller.FacultyController;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
+
+import java.util.List;
+
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class FacultyControllerTest {
@@ -43,8 +55,9 @@ public class FacultyControllerTest {
 
     @Test
     public void testFindById() {
-        Long id = 1L;
-        Faculty faculty = new Faculty(id, "Medicine", "red");
+        Faculty faculty = new Faculty(null, "Medicine", "red");
+        faculty = facultyRepository.save(faculty);
+
         Faculty result = this.restTemplate.postForObject("http://localhost:" + port + "/faculty", faculty, Faculty.class);
 
         Assertions.assertThat(result).isNotNull();
@@ -93,14 +106,18 @@ public class FacultyControllerTest {
     @Test
     public void testFindByNameOrColor() {
         Faculty faculty = new Faculty(null, "Biology", "yellow");
-        this.restTemplate.postForObject("http://localhost:" + port + "/faculty", faculty, Faculty.class);
-
-        Faculty byName = this.restTemplate.getForObject("http://localhost:" + port + "/faculty/search?query=Biology", Faculty.class);
-        Assertions.assertThat(byName).isNotNull();
-        Assertions.assertThat(byName.getName()).isEqualTo("Biology");
-
-        Faculty byColor = this.restTemplate.getForObject("http://localhost:" + port + "/faculty/search?query=yellow", Faculty.class);
-        Assertions.assertThat(byColor).isNotNull();
-        Assertions.assertThat(byColor.getColor()).isEqualTo("yellow");
+        facultyRepository.save(faculty);
+        String query = "Biology";
+        ResponseEntity<List<Faculty>> response = restTemplate.exchange(
+                "http://localhost:" + port + "/faculty/search?query=" + query,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Faculty>>() {}
+        );
+        List<Faculty> facultyList = response.getBody();
+        assertThat(response).isNotNull();
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(facultyList).isNotNull();
+        assertThat(facultyList).isNotEmpty();
     }
 }

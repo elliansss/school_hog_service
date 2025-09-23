@@ -18,11 +18,9 @@ public class FacultyService {
         return facultyRepository.save(faculty);
     }
 
-    public Faculty findByNameOrColorIgnoreCase(String name, String color) {
-        return facultyRepository.findByNameIgnoreCaseOrColorIgnoreCase(name, color).orElse(null);
+    public List<Faculty> findByNameOrColorIgnoreCase(String name, String color) {
+        return facultyRepository.findByNameIgnoreCaseOrColorIgnoreCase(name, color);
     }
-
-
     public Optional<Faculty> findFacultyById(Long id) {
         return facultyRepository.findById(id);
     }

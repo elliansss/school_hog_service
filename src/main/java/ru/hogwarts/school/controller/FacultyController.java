@@ -66,12 +66,12 @@ public class FacultyController {
     }
 
     @GetMapping("/faculty/search")
-    public ResponseEntity<Faculty> findByNameOrColor(@RequestParam String query) {
-        Optional<Faculty> facultyOptional = facultyRepository.findByNameIgnoreCaseOrColorIgnoreCase(query, query);
-        if (facultyOptional.isPresent()) {
-            return ResponseEntity.ok(facultyOptional.get());
-        } else {
+    public ResponseEntity<List<Faculty>> findByNameOrColor(@RequestParam String query) {
+        List<Faculty> faculties = facultyRepository.findByNameIgnoreCaseOrColorIgnoreCase(query, query);
+        if (faculties.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else {
+            return ResponseEntity.ok(faculties);
         }
     }
 }

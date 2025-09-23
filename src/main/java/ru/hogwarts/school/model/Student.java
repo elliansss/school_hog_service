@@ -1,5 +1,6 @@
 package ru.hogwarts.school.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -12,6 +13,7 @@ public class Student {
     private String name;
     private int age;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "faculty_id")
     private Faculty faculty;
@@ -28,6 +30,9 @@ public class Student {
         this.id = id;
         this.name = name;
         this.age = age;
+    }
+
+    public Student() {
     }
 
     @Override
