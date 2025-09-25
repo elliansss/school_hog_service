@@ -66,6 +66,7 @@ public class FacultyControllerTest {
         Assertions.assertThat(result.getColor()).isEqualTo("red");
     }
 
+
     @Test
     public void testEditFaculty() {
         Faculty faculty = new Faculty(null, "Law", "blue");

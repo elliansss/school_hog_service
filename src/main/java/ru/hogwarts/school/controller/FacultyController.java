@@ -50,6 +50,7 @@ public class FacultyController {
         }
     }
 
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         facultyService.deleteFaculty(id);
