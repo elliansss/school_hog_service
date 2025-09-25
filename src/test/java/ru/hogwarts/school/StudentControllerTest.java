@@ -35,6 +35,10 @@ public class StudentControllerTest {
     private StudentController studentController;
 
     @Autowired
+    private FacultyRepository facultyRepository;
+
+
+    @Autowired
     private StudentRepository studentRepository;
 
     @Autowired
@@ -137,14 +141,14 @@ public class StudentControllerTest {
     @Test
     public void testGetFacultyByStudent() {
         Faculty faculty = new Faculty(null, "Test F", "red");
+        facultyRepository.save(faculty);
 
         Student student = new Student(null, "Eric", 17);
         student.setFaculty(faculty);
         studentRepository.save(student);
+        Long id = student.getId();
 
-        Long studentId = student.getId();
-
-        String url = "http://localhost:" + port + "/" + studentId + "/faculty";
+        String url = "http://localhost:" + port + "/" + id + "/faculty";
 
         ResponseEntity<Faculty> response = restTemplate.getForEntity(url, Faculty.class);
 

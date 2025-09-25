@@ -72,9 +72,9 @@ public class StudentController {
     }
 
 
-    @GetMapping("/{studentId}/faculty")
-    public ResponseEntity<Faculty> getFacultyByStudent(@PathVariable Long studentId) {
-        Optional<Student> studentOpt = studentRepository.findById(studentId);
+    @GetMapping("/{id}/faculty")
+    public ResponseEntity<Faculty> getFacultyByStudent(@PathVariable Long id) {
+        Optional<Student> studentOpt = studentRepository.findById(id);
         if (studentOpt.isPresent()) {
             Faculty faculty = studentOpt.get().getFaculty();
             if (faculty != null) {
