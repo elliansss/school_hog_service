@@ -17,6 +17,7 @@ import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.repository.FacultyRepository;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -129,7 +130,8 @@ public class StudentControllerTest {
                 url,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<Student>>() {}
+                new ParameterizedTypeReference<List<Student>>() {
+                }
         );
         List<Student> students = response.getBody();
         assertThat(response).isNotNull();
@@ -142,16 +144,25 @@ public class StudentControllerTest {
     @Test
     public void testGetFacultyByStudent() {
         Faculty faculty = new Faculty(null, "Test F", "red");
-        facultyRepository.save(faculty);
+        faculty = facultyRepository.save(faculty);
 
         Student student = new Student(null, "Eric", 17);
         student.setFaculty(faculty);
-        studentRepository.save(student);
-        Long id = student.getId();
+        student = studentRepository.save(student);
 
-        String url = "http://localhost:" + port + "/" + id + "/faculty";
+        String url = "/student/" + student.getId() + "/faculty";
 
-        ResponseEntity<Faculty> response = restTemplate.getForEntity(url, Faculty.class);
+        ResponseEntity<Faculty> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                Faculty.class
+        );
+
+        if (response.getStatusCode() != HttpStatus.OK) {
+            System.out.println("Error response: " + response.getStatusCode());
+            System.out.println("Error body: " + response.getBody());
+        }
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();

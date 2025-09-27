@@ -19,9 +19,6 @@ import java.util.List;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class FacultyControllerTest {
@@ -57,15 +54,24 @@ public class FacultyControllerTest {
     public void testFindById() {
         Faculty faculty = new Faculty(null, "Medicine", "red");
         faculty = facultyRepository.save(faculty);
+        Long facultyId = faculty.getId();
 
-        Faculty result = this.restTemplate.postForObject("http://localhost:" + port + "/faculty", faculty, Faculty.class);
+        String url = "http://localhost:" + port + "/faculty/" + facultyId;
+        ResponseEntity<Faculty> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                Faculty.class
+        );
 
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        Faculty result = response.getBody();
         Assertions.assertThat(result).isNotNull();
-        Assertions.assertThat(result.getId()).isNotNull();
+        Assertions.assertThat(result.getId()).isEqualTo(facultyId);
         Assertions.assertThat(result.getName()).isEqualTo("Medicine");
         Assertions.assertThat(result.getColor()).isEqualTo("red");
     }
-
 
     @Test
     public void testEditFaculty() {
@@ -113,7 +119,8 @@ public class FacultyControllerTest {
                 "http://localhost:" + port + "/faculty/search?query=" + query,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<Faculty>>() {}
+                new ParameterizedTypeReference<List<Faculty>>() {
+                }
         );
         List<Faculty> facultyList = response.getBody();
         assertThat(response).isNotNull();

@@ -43,7 +43,6 @@ public class StudentController {
         return studentRepository.findById(id).orElse(null);
     }
 
-
     @PutMapping
     public ResponseEntity<Student> editStudent(@RequestBody Student student) {
         Student updated = studentService.editStudent(student);
@@ -71,20 +70,9 @@ public class StudentController {
         return studentRepository.findByAgeBetween(minAge, maxAge);
     }
 
-
-
     @GetMapping("/{id}/faculty")
     public ResponseEntity<Faculty> getFacultyByStudent(@PathVariable Long id) {
-        Optional<Student> studentOpt = studentRepository.findById(id);
-        if (studentOpt.isPresent()) {
-            Faculty faculty = studentOpt.get().getFaculty();
-            if (faculty != null) {
-                return ResponseEntity.ok(faculty);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        Faculty faculty = studentService.getFacultyByStudentId(id);
+        return ResponseEntity.ok(faculty);
     }
 }

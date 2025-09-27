@@ -67,13 +67,9 @@ public class FacultyController {
         }
     }
 
-    @GetMapping("/faculty/search")
+    @GetMapping("/search")
     public ResponseEntity<List<Faculty>> findByNameOrColor(@RequestParam String query) {
-        List<Faculty> faculties = facultyRepository.findByNameIgnoreCaseOrColorIgnoreCase(query, query);
-        if (faculties.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } else {
-            return ResponseEntity.ok(faculties);
-        }
+        List<Faculty> faculties = facultyService.findByNameOrColor(query);
+        return ResponseEntity.ok(faculties);
     }
 }
