@@ -176,6 +176,7 @@ class StudentControllerMockTest {
                 .andExpect(jsonPath("$.length()").value(2));
     }
 
+
     @Test
     public void testGetFacultyByStudentTest() throws Exception{
 

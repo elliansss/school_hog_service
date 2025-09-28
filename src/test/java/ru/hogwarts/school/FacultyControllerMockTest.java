@@ -123,6 +123,7 @@ class FacultyControllerMockTest {
         verify(facultyService).deleteFaculty(id);
     }
 
+
     @Test
     public void findByColorTest() throws Exception {
         String color = "Red";
