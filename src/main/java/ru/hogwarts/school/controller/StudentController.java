@@ -23,16 +23,24 @@ public class StudentController {
         this.studentService = studentService;
     }
 
+    @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
+    private FacultyRepository facultyRepository;
+
     @PostMapping
     public Student addStudent(@RequestBody Student student) {
-        return studentService.addStudent(student);
+        System.out.println("15" + student);
+        Student student1 = studentService.addStudent(student);
+        System.out.println("12" + student1);
+        return student1;
+
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Student> findById(@PathVariable Long id) {
-        Optional<Student> studentOpt = studentService.findById(id);
-        return studentOpt.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public Student findById(@PathVariable Long id) {
+        return studentRepository.findById(id).orElse(null);
     }
 
     @PutMapping
@@ -45,6 +53,7 @@ public class StudentController {
         }
     }
 
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         studentService.deleteById(id);
@@ -55,29 +64,16 @@ public class StudentController {
     public List<Student> findByAge(@RequestParam int age) {
         return studentService.findByAge(age);
     }
+
     @GetMapping("/by-age-between")
-    public List<Student> getByAgeBetween(@RequestParam int min, @RequestParam int max) {
-        return studentService.findByAgeBetween(min, max);
+    public List<Student> getByAgeBetween(@RequestParam int minAge, @RequestParam int maxAge) {
+
+        return studentRepository.findByAgeBetween(minAge, maxAge);
     }
 
-    @Autowired
-    private StudentRepository studentRepository;
-
-    @Autowired
-    private FacultyRepository facultyRepository;
-
-    @GetMapping("/{studentId}/faculty")
-    public ResponseEntity<Faculty> getFacultyByStudent(@PathVariable Long studentId) {
-        Optional<Student> studentOpt = studentRepository.findById(studentId);
-        if (studentOpt.isPresent()) {
-            Faculty faculty = studentOpt.get().getFaculty();
-            if (faculty != null) {
-                return ResponseEntity.ok(faculty);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/{id}/faculty")
+    public ResponseEntity<Faculty> getFacultyByStudent(@PathVariable Long id) {
+        Faculty faculty = studentService.getFacultyByStudentId(id);
+        return ResponseEntity.ok(faculty);
     }
 }

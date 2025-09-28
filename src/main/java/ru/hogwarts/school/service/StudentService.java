@@ -1,11 +1,13 @@
 package ru.hogwarts.school.service;
 
 import org.springframework.stereotype.Service;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.List;
 import java.util.Optional;
+
 
 @Service
 public class StudentService {
@@ -46,5 +48,17 @@ public class StudentService {
             return;
         }
         studentRepository.deleteById(id);
+    }
+
+    public Faculty getFacultyByStudentId(Long studentId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new RuntimeException("Student not found: " + studentId));
+
+        Faculty faculty = student.getFaculty();
+        if (faculty == null) {
+            throw new RuntimeException("Student with id " + studentId + " has no faculty");
+        }
+
+        return faculty;
     }
 }
