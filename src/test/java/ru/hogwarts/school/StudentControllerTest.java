@@ -1,5 +1,4 @@
 package ru.hogwarts.school;
-
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +19,14 @@ import ru.hogwarts.school.repository.FacultyRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 import java.net.URI;
 import java.util.List;
-
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class StudentControllerTest {
+class StudentControllerTest {
+
     @LocalServerPort
     private int port;
 
@@ -37,7 +35,6 @@ public class StudentControllerTest {
 
     @Autowired
     private FacultyRepository facultyRepository;
-
 
     @Autowired
     private StudentRepository studentRepository;
