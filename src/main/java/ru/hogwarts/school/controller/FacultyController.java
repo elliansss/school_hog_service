@@ -1,5 +1,6 @@
 package ru.hogwarts.school.controller;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
@@ -72,4 +73,5 @@ public class FacultyController {
         List<Faculty> faculties = facultyService.findByNameOrColor(query);
         return ResponseEntity.ok(faculties);
     }
+
 }
