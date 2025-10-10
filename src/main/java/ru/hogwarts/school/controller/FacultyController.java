@@ -1,5 +1,7 @@
 package ru.hogwarts.school.controller;
 
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.http.HttpStatus;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
@@ -23,6 +25,9 @@ public class FacultyController {
         this.facultyService = facultyService;
     }
 
+    @Autowired
+    private FacultyRepository facultyRepository;
+
     @PostMapping
     public Faculty addFaculty(@RequestBody Faculty faculty) {
         return facultyService.addFaculty(faculty);
@@ -41,9 +46,11 @@ public class FacultyController {
         if (updated != null) {
             return ResponseEntity.ok(updated);
         } else {
+
             return ResponseEntity.notFound().build();
         }
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
@@ -62,28 +69,9 @@ public class FacultyController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Faculty> findByNameOrColor(@RequestParam String query) {
-        Faculty facultyByName = facultyService.findByNameIgnoreCase(query);
-        if (facultyByName != null) {
-            return ResponseEntity.ok(facultyByName);
-        }
-        Faculty facultyByColor = facultyService.findByColorIgnoreCase(query);
-        if (facultyByColor != null) {
-            return ResponseEntity.ok(facultyByColor);
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<List<Faculty>> findByNameOrColor(@RequestParam String query) {
+        List<Faculty> faculties = facultyService.findByNameOrColor(query);
+        return ResponseEntity.ok(faculties);
     }
-    @Autowired
-    private FacultyRepository facultyRepository;
 
-    @GetMapping("/{facultyId}/students")
-    public ResponseEntity<List<Student>> getStudentsByFaculty(@PathVariable Long facultyId) {
-        Optional<Faculty> facultyOpt = facultyRepository.findById(facultyId);
-        if (facultyOpt.isPresent()) {
-            List<Student> students = facultyOpt.get().getStudents();
-            return ResponseEntity.ok(students);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
 }
