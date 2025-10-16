@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
@@ -149,5 +150,27 @@ public class StudentService {
     private String getExtension(String fileName) {
         logger.info("Was invoked method for get extension");
         return fileName.substring(fileName.lastIndexOf(".") + 1);
+    }
+
+    public List<String> getStudentNamesStartingWithA() {
+        logger.info("Was invoked method getStudentNamesStartingWithA");
+
+        return studentRepository.findAll().stream()
+                .map(Student::getName)
+                .filter(name -> name != null && name.toUpperCase().startsWith("A"))
+                .map(String::toUpperCase)
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    public Double getAverageAgeOfStudents() {
+        logger.info("Was invoked method get average age of students");
+
+        return studentRepository.findAll().stream()
+                .map(Student::getAge)
+                .filter(age -> age != null && age > 0)
+                .mapToInt(Integer::intValue)
+                .average()
+                .orElse(0.0);
     }
 }

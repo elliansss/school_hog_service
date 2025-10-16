@@ -140,4 +140,14 @@ public class StudentController {
             is.transferTo(os);
         }
     }
+
+    @GetMapping("/names-starting-with-a")
+    public List<String> getStudentNamesStartingWithA() {
+        return studentService.getStudentNamesStartingWithA();
+    }
+
+    @GetMapping("/get-average-age")
+    public Double getAverageAge2() {
+        return studentService.getAverageAgeOfStudents();
+    }
 }
