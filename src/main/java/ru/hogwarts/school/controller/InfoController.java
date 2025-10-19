@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.hogwarts.school.service.StudentService;
 
+import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
 @RestController
@@ -27,8 +28,10 @@ public class InfoController {
     }
 
     @GetMapping("/sum-parallel")
-    public long calculateSumParallel() {
+    public int getSumParallel() {
         logger.info("Was invoked method calculateSumParallel");
-        return LongStream.rangeClosed(1, 1_000_000).parallel().sum();
+        return IntStream.rangeClosed(1, 1_000_000)
+                .parallel()
+                .sum();
     }
 }
