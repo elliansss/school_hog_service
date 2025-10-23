@@ -43,6 +43,10 @@ public class StudentService {
         logger.info("Was invoked method for add student");
         return studentRepository.save(student);
     }
+    public List<Student> getAllStudents() {
+        logger.info("Was invoked method for get all students");
+        return studentRepository.findAll();
+    }
 
     public Optional<Student> findById(Long id) {
         logger.info("Was invoked method for find student by id");
