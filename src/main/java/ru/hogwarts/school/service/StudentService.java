@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
@@ -43,6 +44,7 @@ public class StudentService {
         logger.info("Was invoked method for add student");
         return studentRepository.save(student);
     }
+
     public List<Student> getAllStudents() {
         logger.info("Was invoked method for get all students");
         return studentRepository.findAll();
@@ -88,9 +90,9 @@ public class StudentService {
 
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> {
-                        logger.error("Student not found with ID: {}", studentId);
-                        return new RuntimeException("Student not found: " + studentId);
-    });
+                    logger.error("Student not found with ID: {}", studentId);
+                    return new RuntimeException("Student not found: " + studentId);
+                });
 
         Faculty faculty = student.getFaculty();
         if (faculty == null) {
@@ -176,5 +178,58 @@ public class StudentService {
                 .mapToInt(Integer::intValue)
                 .average()
                 .orElse(0.0);
+    }
+
+    public void printStudentsParallel() {
+        logger.info("Was invoked method print Parallel");
+
+        List<Student> students = getAllStudents();
+        System.out.println(students.get(0).getName());
+        System.out.println(students.get(1).getName());
+
+        CompletableFuture.runAsync(() -> {
+            System.out.println(students.get(2).getName());
+            System.out.println(students.get(3).getName());
+        }).join();
+
+        CompletableFuture.runAsync(() -> {
+            System.out.println(students.get(4).getName());
+            System.out.println(students.get(5).getName());
+        }).join();
+    }
+
+    private synchronized void printStudentName(String name) {
+        System.out.println(name);
+    }
+    public void printStudentsSynchronized() {
+        logger.info("Was invoked method print Synchronized");
+
+        List<Student> students = getAllStudents();
+
+        if (students.size() < 6) {
+            System.out.println("Not enough students (minimum 6 required)");
+            return;
+        }
+
+        printStudentName(students.get(0).getName());
+        printStudentName(students.get(1).getName());
+
+        new Thread(() -> {
+            printStudentName(students.get(2).getName());
+            printStudentName(students.get(3).getName());
+        }).start();
+
+
+        new Thread(() -> {
+            printStudentName(students.get(4).getName());
+            printStudentName(students.get(5).getName());
+        }).start();
+
+
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

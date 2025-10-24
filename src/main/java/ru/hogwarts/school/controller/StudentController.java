@@ -154,55 +154,10 @@ public class StudentController {
 
     @GetMapping("/print-parallel")
     public void printStudentsParallel() {
-        List<Student> students = studentService.getAllStudents();
-
-        System.out.println(students.get(0).getName());
-        System.out.println(students.get(1).getName());
-
-        CompletableFuture.runAsync(() -> {
-            System.out.println(students.get(2).getName());
-            System.out.println(students.get(3).getName());
-        }).join();
-
-        CompletableFuture.runAsync(() -> {
-            System.out.println(students.get(4).getName());
-            System.out.println(students.get(5).getName());
-        }).join();
-    }
-
-    private synchronized void printStudentName(String name) {
-        System.out.println(name);
     }
 
     @GetMapping("/print-synchronized")
     public void printSynchronized() {
 
-        List<Student> students = studentService.getAllStudents();
-
-        if (students.size() < 6) {
-            System.out.println("Not enough students (minimum 6 required)");
-            return;
-        }
-
-        printStudentName(students.get(0).getName());
-        printStudentName(students.get(1).getName());
-
-        new Thread(() -> {
-            printStudentName(students.get(2).getName());
-            printStudentName(students.get(3).getName());
-        }).start();
-
-
-        new Thread(() -> {
-            printStudentName(students.get(4).getName());
-            printStudentName(students.get(5).getName());
-        }).start();
-
-
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
     }
 }
